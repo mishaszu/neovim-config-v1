@@ -53,6 +53,26 @@ return {
         git = {
           ignore = false,
         },
+        hijack_cursor = true,
+
+        diagnostics = {
+          enable = true,
+          show_on_dirs = true,
+          icons = {
+            hint = "",
+            info = "",
+            warning = "",
+            error = "",
+          },
+        },
+
+        log = {
+          enable = true,
+          truncate = true,
+          types = {
+            diagnostics = true,
+          },
+        },
       })
 
       -- set keymaps

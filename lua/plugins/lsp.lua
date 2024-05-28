@@ -52,6 +52,11 @@ return {
 
       local keymap = vim.keymap -- for conciseness
 
+      lspconfig.rescriptls.setup({
+        cmd = { "rescript-language-server", "--stdio" },
+        filetype = { "rescript" },
+      })
+
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspConfig", {}),
         callback = function(ev)
