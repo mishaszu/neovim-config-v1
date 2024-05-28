@@ -16,7 +16,7 @@ return {
             return { desc = "nvim-tree: " .. desc, buffer = buf, noremap = true, silent = true, nowait = true }
           end
 
-          vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent, opts("Up"))
+          -- vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent, opts("Up"))
           vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
         end,
       })
