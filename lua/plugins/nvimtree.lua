@@ -48,7 +48,7 @@ return {
           },
         },
         filters = {
-          custom = { ".DS_Store" },
+          custom = { ".DS_Store", ".res.mjs" },
         },
         git = {
           ignore = false,
