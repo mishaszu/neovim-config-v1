@@ -57,6 +57,15 @@ return {
         filetype = { "rescript" },
       })
 
+      lspconfig.purescriptls.setup({
+        settings = {
+          purescript = {
+            formatter = "purs-tidy",
+            addSpagoSources = true, -- e.g. any purescript language-server config here
+          },
+        },
+      })
+
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspConfig", {}),
         callback = function(ev)
@@ -136,6 +145,16 @@ return {
           lspconfig["emmet_ls"].setup({
             capabilities = capabilities,
             filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+          })
+        end,
+        ["purescriptls"] = function()
+          lspconfig["purescriptls"].setup({
+            settings = {
+              purescript = {
+                formatter = "purs-tidy",
+                addSpagoSources = true, -- e.g. any purescript language-server config here
+              },
+            },
           })
         end,
         ["lua_ls"] = function()
