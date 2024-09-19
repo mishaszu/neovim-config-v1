@@ -35,8 +35,8 @@ return {
 
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason-lspconfig.nvim",
       "hrsh7th/cmp-nvim-lsp",
+      "williamboman/mason-lspconfig.nvim",
       { "antosha417/nvim-lsp-file-operations", config = true },
       { "folke/neodev.nvim", opts = {} },
     },
@@ -62,24 +62,6 @@ return {
           purescript = {
             formatter = "purs-tidy",
             addSpagoSources = true, -- e.g. any purescript language-server config here
-          },
-        },
-      })
-
-      lspconfig.rust_analyzer.setup({
-        -- Other Configs ...
-        settings = {
-          ["rust-analyzer"] = {
-            -- Other Settings ...
-            procMacro = {
-              ignored = {
-                leptos_macro = {
-                  -- optional: --
-                  "component",
-                  "server",
-                },
-              },
-            },
           },
         },
       })
@@ -162,7 +144,16 @@ return {
           -- configure emmet language server
           lspconfig["emmet_ls"].setup({
             capabilities = capabilities,
-            filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+            filetypes = {
+              "html",
+              "typescriptreact",
+              "javascriptreact",
+              "css",
+              "sass",
+              "scss",
+              "less",
+              "svelte",
+            },
           })
         end,
         ["purescriptls"] = function()
@@ -207,6 +198,31 @@ return {
             -- Code action groups
             vim.keymap.set("n", "<Leader>a", tools.code_action_group.code_action_group, { buffer = bufnr })
           end,
+          settings = {
+            ["rust-analyzer"] = {
+              rustfmt = {
+                -- cargo install leptosfmt
+                overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+              },
+              lens = {
+                enable = true,
+              },
+              checkOnSave = {
+                enable = true,
+                command = "clippy",
+                extraArgs = { "--no-deps" },
+              },
+              procMacro = {
+                ignored = {
+                  leptos_macro = {
+                    -- optional: --
+                    -- "component",
+                    "server",
+                  },
+                },
+              },
+            },
+          },
         },
       })
 
@@ -218,7 +234,7 @@ return {
         severity_sort = false,
         float = {
           border = "rounded",
-          source = "always",
+          source = true,
           header = "",
           prefix = "",
         },
@@ -271,6 +287,7 @@ return {
           documentation = cmp.config.window.bordered(),
         },
         formatting = {
+          expandable_indicator = true,
           fields = { "menu", "abbr", "kind" },
           format = function(entry, item)
             local menu_icon = {
