@@ -5,11 +5,11 @@ local keymap = vim.keymap -- for conciseness
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
 -- increment/decrement numbers
-keymap.set("n", "<leader>-", "<C-a>", { desc = "Increment number" }) -- decrement
-keymap.set("n", "<leader>+", "<C-x>", { desc = "Decrement number" }) -- increment
+keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- decrement
+keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- increment
 
 -- window management
-keymap.set("n", "<C-|>", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
+keymap.set("n", "<C-a>", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
 keymap.set("n", "<C-s>", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
 keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
 keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
