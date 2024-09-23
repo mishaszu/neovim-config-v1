@@ -200,10 +200,11 @@ return {
           end,
           settings = {
             ["rust-analyzer"] = {
-              rustfmt = {
-                -- cargo install leptosfmt
-                overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
-              },
+              -- this should be configured only for leptosfmt projects
+              -- rustfmt = {
+              --   -- cargo install leptosfmt
+              --   overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+              -- },
               lens = {
                 enable = true,
               },
