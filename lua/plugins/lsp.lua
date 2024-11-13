@@ -143,6 +143,23 @@ return {
         ["rust_analyzer"] = function()
           lspconfig["rust_analyzer"].setup({
             path = "append",
+            lens = {
+              enable = true,
+            },
+            checkOnSave = {
+              enable = true,
+              command = "clippy",
+              extraArgs = { "--no-deps" },
+            },
+            procMacro = {
+              ignored = {
+                leptos_macro = {
+                  -- optional: --
+                  -- "component",
+                  "server",
+                },
+              },
+            },
           })
         end,
         ["emmet_ls"] = function()
@@ -158,6 +175,7 @@ return {
               "scss",
               "less",
               "svelte",
+              "rust",
             },
           })
         end,
