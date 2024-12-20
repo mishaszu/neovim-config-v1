@@ -25,4 +25,4 @@ keymap.set("n", "<S-Tab>", "<cmd>tabp<CR>", { noremap = true })
 keymap.set("n", "<Tab>", "<cmd>tabn<CR>", { noremap = true })
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 
-keymap.set("n", "<C-i>", "<C-i>", { desc = "Jump to the next cursor position" }) --  move current buffer to new tab
+keymap.set("n", "<leader>j", "<C-i>", { desc = "Jump to the next cursor position" })
