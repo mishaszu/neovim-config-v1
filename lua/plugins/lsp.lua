@@ -21,7 +21,7 @@ return {
 
       mason_tool_installer.setup({
         ensure_installed = {
-          "prettier", -- prettier formatter
+          -- "prettier", -- prettier formatter
           "stylua", -- lua formatter
           -- "isort", -- python formatter
           -- "black", -- python formatter
@@ -71,6 +71,36 @@ return {
           purescript = {
             formatter = "purs-tidy",
             addSpagoSources = true, -- e.g. any purescript language-server config here
+          },
+        },
+      })
+
+      lspconfig.rust_analyzer.setup({
+        settings = {
+          ["rust-analyzer"] = {
+            cmd = { "rust-analyzer" },
+            procMacro = {
+              enable = true,
+            },
+            cargo = {
+              buildScripts = {
+                enable = true,
+              },
+              -- You can also set features to "all" if you need them:
+              -- features = "all",
+            },
+            lens = {
+              enable = true,
+            },
+            checkOnSave = {
+              enable = true,
+              command = "clippy",
+              extraArgs = { "--no-deps" },
+              allTargets = true,
+            },
+            -- rustfmt = {
+            --   -- overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+            -- },
           },
         },
       })
@@ -149,29 +179,34 @@ return {
             filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
           })
         end,
-        ["rust_analyzer"] = function()
-          lspconfig["rust_analyzer"].setup({
-            path = "append",
-            lens = {
-              enable = true,
-            },
-            checkOnSave = {
-              enable = true,
-              command = "clippy",
-              extraArgs = { "--no-deps" },
-              allTargets = true,
-            },
-            procMacro = {
-              ignored = {
-                leptos_macro = {
-                  -- optional: --
-                  "component",
-                  "server",
-                },
-              },
-            },
-          })
-        end,
+        -- ["rust_analyzer"] = function()
+        --   lspconfig["rust_analyzer"].setup({
+        --     settings = {
+        --       rustfmt = {
+        --         overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+        --       },
+        --     },
+        --     path = "append",
+        --     lens = {
+        --       enable = true,
+        --     },
+        --     checkOnSave = {
+        --       enable = true,
+        --       command = "clippy",
+        --       extraArgs = { "--no-deps" },
+        --       allTargets = true,
+        --     },
+        --     procMacro = {
+        --       ignored = {
+        --         leptos_macro = {
+        --           -- optional: --
+        --           -- "component",
+        --           "server",
+        --         },
+        --       },
+        --     },
+        --   })
+        -- end,
         ["emmet_ls"] = function()
           -- configure emmet language server
           lspconfig["emmet_ls"].setup({
@@ -230,32 +265,13 @@ return {
             -- Code action groups
             vim.keymap.set("n", "<Leader>a", tools.code_action_group.code_action_group, { buffer = bufnr })
           end,
-          settings = {
-            ["rust-analyzer"] = {
-              -- this should be configured only for leptosfmt projects
-              -- rustfmt = {
-              --   -- cargo install leptosfmt
-              --   overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
-              -- },
-              lens = {
-                enable = true,
-              },
-              checkOnSave = {
-                enable = true,
-                command = "clippy",
-                extraArgs = { "--no-deps" },
-              },
-              procMacro = {
-                ignored = {
-                  leptos_macro = {
-                    -- optional: --
-                    -- "component",
-                    "server",
-                  },
-                },
-              },
-            },
-          },
+          -- settings = {
+          --   ["rust-analyzer"] = {
+          --     rustfmt = {
+          --       overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+          --     },
+          --   },
+          -- },
         },
       })
 
@@ -293,7 +309,6 @@ return {
         mapping = {
           ["<C-p>"] = cmp.mapping.select_prev_item(),
           ["<C-n>"] = cmp.mapping.select_next_item(),
-          -- Add tab support
           ["<S-Tab>"] = cmp.mapping.select_prev_item(),
           ["<Tab>"] = cmp.mapping.select_next_item(),
           ["<C-S-f>"] = cmp.mapping.scroll_docs(-4),
