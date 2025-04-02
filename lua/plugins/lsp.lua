@@ -87,7 +87,7 @@ return {
                 enable = true,
               },
               -- You can also set features to "all" if you need them:
-              -- features = "all",
+              features = "all",
             },
             lens = {
               enable = true,
