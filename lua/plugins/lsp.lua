@@ -1,32 +1,67 @@
 return {
   {
-    "williamboman/mason.nvim",
+    "hrsh7th/nvim-cmp",
     dependencies = {
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-nvim-lua",
+      "hrsh7th/cmp-nvim-lsp-signature-help",
+      "hrsh7th/cmp-vsnip",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/vim-vsnip",
     },
     config = function()
-      local mason = require("mason")
-
-      local mason_tool_installer = require("mason-tool-installer")
-
-      mason.setup({
-        ui = {
-          icons = {
-            package_installed = "",
-            package_pending = "",
-            package_uninstalled = "",
-          },
+      local cmp = require("cmp")
+      local lsp = require("cmp_nvim_lsp")
+      lsp.default_capabilities()
+      cmp.setup({
+        -- Enable LSP snippets
+        snippet = {
+          expand = function(args)
+            vim.fn["vsnip#anonymous"](args.body)
+          end,
         },
-      })
-
-      mason_tool_installer.setup({
-        ensure_installed = {
-          -- "prettier", -- prettier formatter
-          "stylua", -- lua formatter
-          -- "isort", -- python formatter
-          -- "black", -- python formatter
-          -- "pylint",
-          "eslint_d",
+        mapping = {
+          ["<C-p>"] = cmp.mapping.select_prev_item(),
+          ["<C-n>"] = cmp.mapping.select_next_item(),
+          ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+          ["<Tab>"] = cmp.mapping.select_next_item(),
+          ["<C-S-f>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-f>"] = cmp.mapping.scroll_docs(4),
+          ["<C-Space>"] = cmp.mapping.complete(),
+          ["<C-e>"] = cmp.mapping.close(),
+          ["<CR>"] = cmp.mapping.confirm({
+            behavior = cmp.ConfirmBehavior.Insert,
+            select = true,
+          }),
+        },
+        -- Installed sources:
+        sources = {
+          { name = "path" },                                       -- file paths
+          { name = "nvim_lsp",               keyword_length = 1 }, -- from language server
+          { name = "nvim_lsp_signature_help" },                    -- display function signatures with current parameter emphasized
+          { name = "nvim_lua",               keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
+          { name = "buffer",                 keyword_length = 2 }, -- source current buffer
+          { name = "vsnip",                  keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
+          { name = "calc" },                                       -- source for math calculation
+        },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
+        formatting = {
+          expandable_indicator = true,
+          fields = { "menu", "abbr", "kind" },
+          format = function(entry, item)
+            local menu_icon = {
+              nvim_lsp = "λ",
+              vsnip = "⋗",
+              buffer = "Ω",
+              path = "🖫",
+            }
+            item.menu = menu_icon[entry.source.name]
+            return item
+          end,
         },
       })
     end,
@@ -36,9 +71,6 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
-      "williamboman/mason-lspconfig.nvim",
-      { "antosha417/nvim-lsp-file-operations", config = true },
-      { "folke/neodev.nvim", opts = {} },
     },
     config = function()
       for _, method in ipairs({ "textDocument/diagnostic", "workspace/diagnostic" }) do
@@ -50,14 +82,9 @@ return {
           return default_diagnostic_handler(err, result, context, config)
         end
       end
-      -- import lspconfig plugin
       local lspconfig = require("lspconfig")
-
-      -- import mason_lspconfig plugin
-      local mason_lspconfig = require("mason-lspconfig")
-
-      -- import cmp-nvim-lsp plugin
       local cmp_nvim_lsp = require("cmp_nvim_lsp")
+      local capabilities = cmp_nvim_lsp.default_capabilities()
 
       local keymap = vim.keymap -- for conciseness
 
@@ -76,11 +103,19 @@ return {
       })
 
       lspconfig.rust_analyzer.setup({
+        capabilities = capabilities,
         settings = {
           ["rust-analyzer"] = {
             cmd = { "rust-analyzer" },
             procMacro = {
               enable = true,
+              -- ignored = {
+              --   leptos_macro = {
+              --     -- optional: --
+              --     "component",
+              --     "server",
+              --   },
+              -- },
             },
             cargo = {
               buildScripts = {
@@ -98,9 +133,60 @@ return {
               extraArgs = { "--no-deps" },
               allTargets = true,
             },
-            -- rustfmt = {
-            --   -- overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
-            -- },
+            rustfmt = {
+              overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+            },
+          },
+        },
+      })
+
+      lspconfig.tsserver.setup({
+        cmd = { "typescript-language-server", "--stdio" }, -- Global binary
+        filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
+        root_dir = require("lspconfig.util").root_pattern("package.json", "tsconfig.json", ".git"),
+        on_attach = function(client, bufnr)
+          -- optional: disable formatting if using prettier or eslint
+          client.server_capabilities.documentFormattingProvider = false
+        end,
+      })
+
+      lspconfig.lua_ls.setup({
+        settings = {
+          Lua = {
+            runtime = {
+              version = "LuaJIT", -- Neovim uses LuaJIT
+            },
+            diagnostics = {
+              globals = { "vim" }, -- Recognize `vim` global
+            },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true), -- Make the server aware of Neovim runtime
+              checkThirdParty = false,                           -- To stop "Do you want to configure...?" popups
+            },
+            telemetry = {
+              enable = false, -- Disable telemetry
+            },
+          },
+        },
+      })
+
+      lspconfig.tailwindcss.setup({
+        capabilities = capabilities,
+        cmd = { "tailwindcss-language-server", "--stdio" },
+        filetypes = { "html", "css", "scss", "svelte", "javascript", "typescript", "rust" }, -- 👈 add rust
+        -- root_dir = util.root_pattern("tailwind.config.js"),
+        settings = {
+          tailwindCSS = {
+            includeLanguages = {
+              rust = "html", -- ✅ the new correct way
+            },
+            experimental = {
+              classRegex = {
+                -- 👇 Match things like class="..."
+                'class\\s*=\\s*"([^"]*)"',
+                "class!\\(([^)]*)\\)",
+              },
+            },
           },
         },
       })
@@ -155,7 +241,6 @@ return {
       })
 
       -- used to enable autocompletion (assign to every lsp server config)
-      local capabilities = cmp_nvim_lsp.default_capabilities()
 
       -- Change the Diagnostic symbols in the sign column (gutter)
       -- (not in youtube nvim video)
@@ -164,198 +249,6 @@ return {
         local hl = "DiagnosticSign" .. type
         vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
       end
-
-      mason_lspconfig.setup_handlers({
-        -- default handler for installed servers
-        function(server_name)
-          lspconfig[server_name].setup({
-            capabilities = capabilities,
-          })
-        end,
-        ["graphql"] = function()
-          -- configure graphql language server
-          lspconfig["graphql"].setup({
-            capabilities = capabilities,
-            filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-          })
-        end,
-        -- ["rust_analyzer"] = function()
-        --   lspconfig["rust_analyzer"].setup({
-        --     settings = {
-        --       rustfmt = {
-        --         overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
-        --       },
-        --     },
-        --     path = "append",
-        --     lens = {
-        --       enable = true,
-        --     },
-        --     checkOnSave = {
-        --       enable = true,
-        --       command = "clippy",
-        --       extraArgs = { "--no-deps" },
-        --       allTargets = true,
-        --     },
-        --     procMacro = {
-        --       ignored = {
-        --         leptos_macro = {
-        --           -- optional: --
-        --           -- "component",
-        --           "server",
-        --         },
-        --       },
-        --     },
-        --   })
-        -- end,
-        ["emmet_ls"] = function()
-          -- configure emmet language server
-          lspconfig["emmet_ls"].setup({
-            capabilities = capabilities,
-            filetypes = {
-              "html",
-              "typescriptreact",
-              "javascriptreact",
-              "css",
-              "sass",
-              "scss",
-              "less",
-              "svelte",
-            },
-          })
-        end,
-        ["purescriptls"] = function()
-          lspconfig["purescriptls"].setup({
-            settings = {
-              purescript = {
-                formatter = "purs-tidy",
-                addSpagoSources = true, -- e.g. any purescript language-server config here
-              },
-            },
-          })
-        end,
-        ["lua_ls"] = function()
-          -- configure lua server (with special settings)
-          lspconfig["lua_ls"].setup({
-            capabilities = capabilities,
-            settings = {
-              Lua = {
-                -- make the language server recognize "vim" global
-                diagnostics = {
-                  globals = { "vim" },
-                },
-                completion = {
-                  callSnippet = "Replace",
-                },
-              },
-            },
-          })
-        end,
-      })
     end,
   },
-  {
-    "simrat39/rust-tools.nvim",
-    config = function()
-      local tools = require("rust-tools")
-      tools.setup({
-        server = {
-          on_attach = function(_, bufnr)
-            -- Hover actions
-            vim.keymap.set("n", "<C-space>", tools.hover_actions.hover_actions, { buffer = bufnr })
-            -- Code action groups
-            vim.keymap.set("n", "<Leader>a", tools.code_action_group.code_action_group, { buffer = bufnr })
-          end,
-          -- settings = {
-          --   ["rust-analyzer"] = {
-          --     rustfmt = {
-          --       overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
-          --     },
-          --   },
-          -- },
-        },
-      })
-
-      vim.diagnostic.config({
-        virtual_text = false,
-        signs = true,
-        update_in_insert = true,
-        underline = true,
-        severity_sort = false,
-        float = {
-          border = "rounded",
-          source = true,
-          header = "",
-          prefix = "",
-        },
-      })
-
-      vim.cmd([[
-        set signcolumn=yes
-        autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
-      ]])
-    end,
-  },
-  {
-    "hrsh7th/nvim-cmp",
-    config = function()
-      local cmp = require("cmp")
-      cmp.setup({
-        -- Enable LSP snippets
-        snippet = {
-          expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body)
-          end,
-        },
-        mapping = {
-          ["<C-p>"] = cmp.mapping.select_prev_item(),
-          ["<C-n>"] = cmp.mapping.select_next_item(),
-          ["<S-Tab>"] = cmp.mapping.select_prev_item(),
-          ["<Tab>"] = cmp.mapping.select_next_item(),
-          ["<C-S-f>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
-          ["<C-Space>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.close(),
-          ["<CR>"] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Insert,
-            select = true,
-          }),
-        },
-        -- Installed sources:
-        sources = {
-          { name = "path" }, -- file paths
-          { name = "nvim_lsp", keyword_length = 1 }, -- from language server
-          { name = "nvim_lsp_signature_help" }, -- display function signatures with current parameter emphasized
-          { name = "nvim_lua", keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
-          { name = "buffer", keyword_length = 2 }, -- source current buffer
-          { name = "vsnip", keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
-          { name = "calc" }, -- source for math calculation
-        },
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
-        formatting = {
-          expandable_indicator = true,
-          fields = { "menu", "abbr", "kind" },
-          format = function(entry, item)
-            local menu_icon = {
-              nvim_lsp = "λ",
-              vsnip = "⋗",
-              buffer = "Ω",
-              path = "🖫",
-            }
-            item.menu = menu_icon[entry.source.name]
-            return item
-          end,
-        },
-      })
-    end,
-  },
-  "hrsh7th/cmp-nvim-lsp",
-  "hrsh7th/cmp-nvim-lua",
-  "hrsh7th/cmp-nvim-lsp-signature-help",
-  "hrsh7th/cmp-vsnip",
-  "hrsh7th/cmp-path",
-  "hrsh7th/cmp-buffer",
-  "hrsh7th/vim-vsnip",
 }
