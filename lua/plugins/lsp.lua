@@ -37,13 +37,13 @@ return {
         },
         -- Installed sources:
         sources = {
-          { name = "path" },                                       -- file paths
-          { name = "nvim_lsp",               keyword_length = 1 }, -- from language server
-          { name = "nvim_lsp_signature_help" },                    -- display function signatures with current parameter emphasized
-          { name = "nvim_lua",               keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
-          { name = "buffer",                 keyword_length = 2 }, -- source current buffer
-          { name = "vsnip",                  keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
-          { name = "calc" },                                       -- source for math calculation
+          { name = "path" }, -- file paths
+          { name = "nvim_lsp", keyword_length = 1 }, -- from language server
+          { name = "nvim_lsp_signature_help" }, -- display function signatures with current parameter emphasized
+          { name = "nvim_lua", keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
+          { name = "buffer", keyword_length = 2 }, -- source current buffer
+          { name = "vsnip", keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
+          { name = "calc" }, -- source for math calculation
         },
         window = {
           completion = cmp.config.window.bordered(),
@@ -124,6 +124,15 @@ return {
               -- You can also set features to "all" if you need them:
               features = "all",
             },
+            inlayHints = {
+              enable = true,
+              typeHints = {
+                enable = true,
+              },
+              parameterHints = {
+                enable = true,
+              },
+            },
             lens = {
               enable = true,
             },
@@ -133,16 +142,37 @@ return {
               extraArgs = { "--no-deps" },
               allTargets = true,
             },
-            rustfmt = {
-              overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
-            },
+            -- rustfmt = {
+            --   overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+            -- },
           },
         },
       })
+      vim.lsp.inlay_hint.enable(true)
 
-      lspconfig.tsserver.setup({
+      -- vim.api.nvim_create_autocmd("LspAttach", {
+      --   callback = function(args)
+      --     local client = vim.lsp.get_client_by_id(args.data.client_id)
+      --     if client.server_capabilities.inlayHintProvider then
+      --       vim.lsp.inlay_hint.enable(true, args.buf)
+      --     end
+      --   end,
+      -- })
+
+      vim.keymap.set("n", "<leader>uh", function()
+        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+      end, { desc = "Toggle Inlay Hints" })
+
+      lspconfig.ts_ls.setup({
         cmd = { "typescript-language-server", "--stdio" }, -- Global binary
-        filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
+        filetypes = {
+          "typescript",
+          "typescriptreact",
+          "typescript.tsx",
+          "javascript",
+          "javascriptreact",
+          "javascript.jsx",
+        },
         root_dir = require("lspconfig.util").root_pattern("package.json", "tsconfig.json", ".git"),
         on_attach = function(client, bufnr)
           -- optional: disable formatting if using prettier or eslint
@@ -151,6 +181,7 @@ return {
       })
 
       lspconfig.lua_ls.setup({
+        cmd = { "lua-language-server" },
         settings = {
           Lua = {
             runtime = {
@@ -161,7 +192,7 @@ return {
             },
             workspace = {
               library = vim.api.nvim_get_runtime_file("", true), -- Make the server aware of Neovim runtime
-              checkThirdParty = false,                           -- To stop "Do you want to configure...?" popups
+              checkThirdParty = false, -- To stop "Do you want to configure...?" popups
             },
             telemetry = {
               enable = false, -- Disable telemetry
