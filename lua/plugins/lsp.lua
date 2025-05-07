@@ -37,13 +37,13 @@ return {
         },
         -- Installed sources:
         sources = {
-          { name = "path" }, -- file paths
-          { name = "nvim_lsp", keyword_length = 1 }, -- from language server
-          { name = "nvim_lsp_signature_help" }, -- display function signatures with current parameter emphasized
-          { name = "nvim_lua", keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
-          { name = "buffer", keyword_length = 2 }, -- source current buffer
-          { name = "vsnip", keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
-          { name = "calc" }, -- source for math calculation
+          { name = "path" },                                       -- file paths
+          { name = "nvim_lsp",               keyword_length = 1 }, -- from language server
+          { name = "nvim_lsp_signature_help" },                    -- display function signatures with current parameter emphasized
+          { name = "nvim_lua",               keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
+          { name = "buffer",                 keyword_length = 2 }, -- source current buffer
+          { name = "vsnip",                  keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
+          { name = "calc" },                                       -- source for math calculation
         },
         window = {
           completion = cmp.config.window.bordered(),
@@ -87,6 +87,36 @@ return {
       local capabilities = cmp_nvim_lsp.default_capabilities()
 
       local keymap = vim.keymap -- for conciseness
+      local util = require("lspconfig.util")
+
+      local function has_leptos_dependency(fname)
+        local cargo_toml = util.search_ancestors(fname, function(dir)
+          local cargo_path = dir .. "/Cargo.toml"
+          if util.path.is_file(cargo_path) then
+            for line in io.lines(cargo_path) do
+              if line:match('%f[%w]leptos%f[%W]') then
+                return dir
+              end
+            end
+          end
+        end)
+        return cargo_toml
+      end
+
+      local function is_leptos_project()
+        local path = vim.fn.getcwd() .. "/Cargo.toml"
+        local f = io.open(path, "r")
+        if not f then return false end
+        for line in f:lines() do
+          if line:match('%f[%w]leptos%f[%W]') then
+            f:close()
+            return true
+          end
+        end
+        f:close()
+        return false
+      end
+
 
       lspconfig.rescriptls.setup({
         cmd = { "rescript-language-server", "--stdio" },
@@ -102,52 +132,62 @@ return {
         },
       })
 
-      lspconfig.rust_analyzer.setup({
-        capabilities = capabilities,
-        settings = {
-          ["rust-analyzer"] = {
-            cmd = { "rust-analyzer" },
-            procMacro = {
-              enable = true,
-              -- ignored = {
-              --   leptos_macro = {
-              --     -- optional: --
-              --     "component",
-              --     "server",
-              --   },
-              -- },
-            },
-            cargo = {
-              buildScripts = {
-                enable = true,
-              },
-              -- You can also set features to "all" if you need them:
-              features = "all",
-            },
-            inlayHints = {
-              enable = true,
-              typeHints = {
-                enable = true,
-              },
-              parameterHints = {
-                enable = true,
-              },
-            },
-            lens = {
-              enable = true,
-            },
-            checkOnSave = {
-              enable = true,
-              command = "clippy",
-              extraArgs = { "--no-deps" },
-              allTargets = true,
-            },
-            -- rustfmt = {
-            --   overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+      local base_rust_settings = {
+        ["rust-analyzer"] = {
+          cmd = { "rust-analyzer" },
+          procMacro = {
+            enable = true,
+            -- ignored = {
+            --   leptos_macro = {
+            --     -- optional: --
+            --     "component",
+            --     "server",
+            --   },
             -- },
           },
+          cargo = {
+            buildScripts = {
+              enable = true,
+            },
+            -- You can also set features to "all" if you need them:
+            features = "all",
+          },
+          inlayHints = {
+            enable = true,
+            typeHints = {
+              enable = true,
+            },
+            parameterHints = {
+              enable = true,
+            },
+          },
+          lens = {
+            enable = true,
+          },
+          checkOnSave = {
+            enable = true,
+            command = "clippy",
+            extraArgs = { "--no-deps" },
+            allTargets = true,
+          },
         },
+      }
+
+      if is_leptos_project() then
+        base_rust_settings = vim.tbl_deep_extend("force", base_rust_settings, {
+          ["rust-analyzer"] = {
+            rustfmt = {
+              overrideCommand = { "leptosfmt", "--stdin", "--rustfmt" },
+            },
+          },
+        })
+      end
+
+      lspconfig.rust_analyzer.setup({
+        capabilities = capabilities,
+        settings = base_rust_settings,
       })
+
       vim.lsp.inlay_hint.enable(true)
 
       -- vim.api.nvim_create_autocmd("LspAttach", {
@@ -192,7 +232,7 @@ return {
             },
             workspace = {
               library = vim.api.nvim_get_runtime_file("", true), -- Make the server aware of Neovim runtime
-              checkThirdParty = false, -- To stop "Do you want to configure...?" popups
+              checkThirdParty = false,                           -- To stop "Do you want to configure...?" popups
             },
             telemetry = {
               enable = false, -- Disable telemetry
@@ -205,18 +245,17 @@ return {
         capabilities = capabilities,
         cmd = { "tailwindcss-language-server", "--stdio" },
         filetypes = { "html", "css", "scss", "svelte", "javascript", "typescript", "rust" }, -- 👈 add rust
-        -- root_dir = util.root_pattern("tailwind.config.js"),
+        root_dir = has_leptos_dependency,
         settings = {
           tailwindCSS = {
             includeLanguages = {
               rust = "html", -- ✅ the new correct way
             },
             experimental = {
+              configFile = "style/tailwind.css",
               classRegex = {
-                -- 👇 Match things like class="..."
-                'class\\s*=\\s*"([^"]*)"',
-                "class!\\(([^)]*)\\)",
-              },
+                'class=(?:tw_merge|tw_join)!\\(([\\s\\S]*)\\)'
+              }
             },
           },
         },
