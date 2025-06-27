@@ -12,6 +12,7 @@ return {
     config = function()
       -- load the colorscheme here
       vim.cmd([[colorscheme dayfox]])
+      -- vim.cmd([[colorscheme PaperColorSlimLight]])
       vim.schedule(function()
         vim.api.nvim_set_hl(0, "LspInlayHint", { fg = "#d1dec5" })
       end)
