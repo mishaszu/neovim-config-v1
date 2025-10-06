@@ -82,7 +82,6 @@ return {
           return default_diagnostic_handler(err, result, context, config)
         end
       end
-      local lspconfig = require("lspconfig")
       local cmp_nvim_lsp = require("cmp_nvim_lsp")
       local capabilities = cmp_nvim_lsp.default_capabilities()
 
@@ -118,19 +117,19 @@ return {
       end
 
 
-      lspconfig.rescriptls.setup({
+      vim.lsp.config['rescript'] = {
         cmd = { "rescript-language-server", "--stdio" },
         filetype = { "rescript" },
-      })
+      }
 
-      lspconfig.purescriptls.setup({
+      vim.lsp.config['purescriptls'] = {
         settings = {
           purescript = {
             formatter = "purs-tidy",
             addSpagoSources = true, -- e.g. any purescript language-server config here
           },
         },
-      })
+      }
 
       local base_rust_settings = {
         ["rust-analyzer"] = {
@@ -183,10 +182,11 @@ return {
         })
       end
 
-      lspconfig.rust_analyzer.setup({
+      vim.lsp.config['rust_analyzer'] = {
         capabilities = capabilities,
         settings = base_rust_settings,
-      })
+      }
+      vim.lsp.enable('rust_analyzer')
 
       vim.lsp.inlay_hint.enable(true)
 
@@ -203,7 +203,7 @@ return {
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
       end, { desc = "Toggle Inlay Hints" })
 
-      lspconfig.ts_ls.setup({
+      vim.lsp.config['ts_ls'] = {
         cmd = { "typescript-language-server", "--stdio" }, -- Global binary
         filetypes = {
           "typescript",
@@ -218,9 +218,9 @@ return {
           -- optional: disable formatting if using prettier or eslint
           client.server_capabilities.documentFormattingProvider = false
         end,
-      })
+      }
 
-      lspconfig.lua_ls.setup({
+      vim.lsp.config['lua_ls'] = {
         cmd = { "lua-language-server" },
         settings = {
           Lua = {
@@ -239,9 +239,10 @@ return {
             },
           },
         },
-      })
+      }
+      vim.lsp.enable('lua_ls')
 
-      lspconfig.tailwindcss.setup({
+      vim.lsp.config['tailwindcss'] = {
         capabilities = capabilities,
         cmd = { "tailwindcss-language-server", "--stdio" },
         filetypes = { "html", "css", "scss", "svelte", "javascript", "typescript", "rust" }, -- 👈 add rust
@@ -259,7 +260,7 @@ return {
             },
           },
         },
-      })
+      }
 
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspConfig", {}),
@@ -297,10 +298,16 @@ return {
           keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
 
           opts.desc = "Go to previous diagnostic"
-          keymap.set("n", "<C-k>", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
+          local jumpBackword = function()
+            vim.diagnostic.jump({ count = -1, float = true })
+          end
+          keymap.set("n", "<C-k>", jumpBackword, opts) -- jump to previous diagnostic in buffer
 
+          local jumpForword = function()
+            vim.diagnostic.jump({ count = 1, float = true })
+          end
           opts.desc = "Go to next diagnostic"
-          keymap.set("n", "<C-j>", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
+          keymap.set("n", "<C-j>", jumpForword, opts) -- jump to next diagnostic in buffer
 
           opts.desc = "Show documentation for what is under cursor"
           keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
@@ -314,11 +321,27 @@ return {
 
       -- Change the Diagnostic symbols in the sign column (gutter)
       -- (not in youtube nvim video)
-      local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-      for type, icon in pairs(signs) do
-        local hl = "DiagnosticSign" .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-      end
+      -- local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
+      vim.diagnostic.config({
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = " ",
+            [vim.diagnostic.severity.WARN] = " ",
+            [vim.diagnostic.severity.HINT] = "󰠠 ",
+            [vim.diagnostic.severity.INFO] = " ",
+          },
+          texthl = {
+            [vim.diagnostic.severity.ERROR] = "DiagnosticSignError",
+            [vim.diagnostic.severity.WARN] = "DiagnosticSignWarn",
+            [vim.diagnostic.severity.HINT] = "DiagnosticSignHint",
+            [vim.diagnostic.severity.INFO] = "DiagnosticSignInfo",
+          },
+        }
+      })
+      -- for type, icon in pairs(signs) do
+      --   local hl = "DiagnosticSign" .. type
+      --   vim.fn.sign_define(hl, {})
+      -- end
     end,
   },
   {
