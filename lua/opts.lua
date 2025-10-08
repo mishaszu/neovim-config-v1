@@ -2,6 +2,8 @@ vim.cmd("let g:netrw_liststyle = 3")
 
 local opt = vim.opt
 
+opt.guifont = "Hack Nerd Font Mono"
+
 opt.relativenumber = false
 opt.number = true
 

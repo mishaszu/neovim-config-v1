@@ -149,7 +149,8 @@ return {
               enable = true,
             },
             -- You can also set features to "all" if you need them:
-            features = "all",
+            allFeatures = true,
+            -- features = { "dev-ssr" },
           },
           inlayHints = {
             enable = true,
