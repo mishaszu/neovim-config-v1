@@ -1,6 +1,7 @@
 return {
   {
     "xiyaowong/transparent.nvim",
+    enable = false, -- plugin is useful only with image bg
     config = function()
       local config = require("transparent")
 

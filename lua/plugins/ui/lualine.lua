@@ -1,8 +1,10 @@
+-- bottom status line
 return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   {
     "arkav/lualine-lsp-progress",
+    -- enabled = false,
     config = function()
       local lualine = require("lualine")
 
