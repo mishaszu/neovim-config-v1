@@ -1,7 +1,7 @@
 return {
   "nvim-treesitter/nvim-treesitter",
   -- optional: keep parsers fresh on plugin update
-  build = ":TSUpdate",
+  build = ":tsupdate",
   opts = function(_, opts)
     opts.ensure_installed = opts.ensure_installed or {}
 
