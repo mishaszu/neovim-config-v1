@@ -5,7 +5,7 @@ return {
   opts = {
     format_on_save = { lsp_fallback = true, async = false, timeout_ms = 1000 },
     formatters_by_ft = {
-      markdown = { "mdformat" },
+      -- markdown = { "mdformat" },
       -- python = { "isort", "black" },
     },
   },
