@@ -1,7 +1,11 @@
 require("config.opts")
 require("config.keys")
+require("config.packages")
 
-require("config.lazyconf")
+-- have to be after packages
+require("config.langs")
+
+-- require("config.lazyconf")
 
 -- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#ff00ff", fg = "#000000" })
 -- vim.api.nvim_set_hl(0, "FloatBorder", { bg = "#ff00ff", fg = "#000000" })
