@@ -23,12 +23,10 @@ vim.lsp.config["lua_ls"] = {
 
 vim.lsp.enable("lua_ls")
 
-
 -- formatting
 local opts = require("packages.conform").opts
 opts.formatters_by_ft = opts.formatters_by_ft or {}
 opts.formatters_by_ft.lua = { "stylua" }
-
 
 -- required tools
 local tools = {

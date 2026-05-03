@@ -5,6 +5,7 @@ require("telescope").setup({
 })
 
 pcall(require("telescope").load_extension, "fzf")
+pcall(require("telescope").load_extension, "live_grep_args")
 
 local builtin = require("telescope.builtin")
 local tel = require("telescope")

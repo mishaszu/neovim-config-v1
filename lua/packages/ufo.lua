@@ -9,12 +9,6 @@ vim.o.foldenable = true
 vim.keymap.set("n", "zR", ufo.openAllFolds)
 vim.keymap.set("n", "zM", ufo.closeAllFolds)
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.foldingRange = {
-  dynamicRegistration = false,
-  lineFoldingOnly = true,
-}
-
 ufo.setup({
   fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
     local newVirtText = {}

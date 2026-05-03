@@ -1,6 +1,3 @@
-local lsp = require("cmp_nvim_lsp")
-lsp.default_capabilities()
-
 local cmp = require("cmp")
 
 cmp.setup({
@@ -31,7 +28,6 @@ cmp.setup({
     { name = "nvim_lua", keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
     { name = "buffer", keyword_length = 2 }, -- source current buffer
     { name = "vsnip", keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
-    { name = "calc" }, -- source for math calculation
   },
   window = {
     completion = cmp.config.window.bordered(),

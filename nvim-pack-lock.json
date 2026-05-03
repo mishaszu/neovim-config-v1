@@ -48,6 +48,10 @@
       "rev": "aeef62ee97872d2557d25904d160ec93a4a355f8",
       "src": "https://github.com/sainnhe/everforest"
     },
+    "haskell-tools.nvim": {
+      "rev": "ce41aaafbb8712288d1c9b4347c7ad2adbf4b25d",
+      "src": "https://github.com/mrcjkb/haskell-tools.nvim"
+    },
     "kanagawa.nvim": {
       "rev": "aef7f5cec0a40dbe7f3304214850c472e2264b10",
       "src": "https://github.com/rebelot/kanagawa.nvim"
@@ -75,6 +79,10 @@
     "nvim-cmp": {
       "rev": "a1d504892f2bc56c2e79b65c6faded2fd21f3eca",
       "src": "https://github.com/hrsh7th/nvim-cmp"
+    },
+    "nvim-dap": {
+      "rev": "45a69eba683a2c448dd9ecfc4de89511f0646b5f",
+      "src": "https://github.com/mfussenegger/nvim-dap"
     },
     "nvim-lint": {
       "rev": "eab58b48eb11d7745c11c505e0f3057165902461",
@@ -124,6 +132,10 @@
       "rev": "119e8961014c9bfaf1487bf3c2a393d254f337e2",
       "src": "https://github.com/kevinhwang91/promise-async"
     },
+    "purescript-vim": {
+      "rev": "82348352e6568fcc0385bd7c99a8ead3a479feea",
+      "src": "https://github.com/purescript-contrib/purescript-vim"
+    },
     "rainbow-delimiters.nvim": {
       "rev": "aab6caaffd79b8def22ec4320a5344f7c42f58d2",
       "src": "https://gitlab.com/HiPhish/rainbow-delimiters.nvim"
@@ -155,6 +167,10 @@
     "vim-vsnip": {
       "rev": "9bcfabea653abdcdac584283b5097c3f8760abaa",
       "src": "https://github.com/hrsh7th/vim-vsnip"
+    },
+    "toggleterm.nvim": {
+      "rev": "9a88eae817ef395952e08650b3283726786fb5fb",
+      "src": "https://github.com/akinsho/toggleterm.nvim"
     }
   }
 }

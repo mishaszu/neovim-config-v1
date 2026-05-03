@@ -1,5 +1,9 @@
-local gh = function(x) return 'https://github.com/' .. x end
-local gl = function(x) return 'https://gitlab.com/' .. x end
+local gh = function(x)
+  return "https://github.com/" .. x
+end
+local gl = function(x)
+  return "https://gitlab.com/" .. x
+end
 
 vim.pack.add({
   -- ui
@@ -31,6 +35,12 @@ vim.pack.add({
 
   -- trouble shooting with lsp
   gh("folke/trouble.nvim"),
+
+  -- dap
+  gh("mfussenegger/nvim-dap"),
+
+  -- terminals / repls
+  gh("akinsho/toggleterm.nvim"),
 
   --  treesitter
   gh("nvim-treesitter/nvim-treesitter"),
@@ -71,14 +81,17 @@ vim.pack.add({
   --
   gh("windwp/nvim-autopairs"),
 
-
   gh("neovim/nvim-lspconfig"),
-
 
   -- rust
   gh("saecki/crates.nvim"),
 
-})
+  -- haskell
+  gh("mrcjkb/haskell-tools.nvim"),
+
+  -- purescript
+  gh("purescript-contrib/purescript-vim"),
+}, { load = true })
 
 vim.cmd([[colorscheme seoul256]])
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
@@ -95,14 +108,14 @@ end
 
 require("packages.autopairs")
 require("packages.cmp")
+require("packages.crates")
 require("packages.dressing")
 require("packages.lint")
+require("packages.lsp")
 require("packages.lualine")
 require("packages.nvim-tree")
+require("packages.surround")
 require("packages.telescope")
+require("packages.toggleterm")
 require("packages.trouble")
 require("packages.ufo")
-require("packages.lsp")
-
-local opts = require("packages.conform").opts
-require("conform").setup(opts)

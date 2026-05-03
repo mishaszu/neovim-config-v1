@@ -1,7 +1,3 @@
--- lsp
-local cmp_nvim_lsp = require("cmp_nvim_lsp")
-local capabilities = cmp_nvim_lsp.default_capabilities()
-
 local function is_leptos_project()
   local path = vim.fn.getcwd() .. "/Cargo.toml"
   local f = io.open(path, "r")
@@ -17,6 +13,8 @@ local function is_leptos_project()
   f:close()
   return false
 end
+
+local has_leptos = is_leptos_project()
 
 local base_rust_settings = {
   ["rust-analyzer"] = {
@@ -58,7 +56,7 @@ local base_rust_settings = {
   },
 }
 
-if is_leptos_project() then
+if has_leptos then
   base_rust_settings = vim.tbl_deep_extend("force", base_rust_settings, {
     ["rust-analyzer"] = {
       rustfmt = {
@@ -69,12 +67,10 @@ if is_leptos_project() then
 end
 
 vim.lsp.config("rust_analyzer", {
-  capabilities = capabilities,
   settings = base_rust_settings,
 })
 
 vim.lsp.enable("rust_analyzer")
-
 
 -- formatter
 local opts = require("packages.conform").opts
@@ -99,8 +95,13 @@ opts.formatters = vim.tbl_deep_extend("force", opts.formatters or {}, {
 })
 
 local tools = {
-  leptosfmt = "cargo install leptofmt",
+  cargo = "rustup toolchain install stable",
+  rustfmt = "rustup component add rustfmt",
   ["rust-analyzer"] = "rustup component add rust-analyzer",
 }
+
+if has_leptos or require("config.tools").env_enabled("NVIM_ENABLE_LEPTOS", false) then
+  tools.leptosfmt = "cargo install leptosfmt"
+end
 
 return tools

@@ -1,3 +1,14 @@
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+capabilities.textDocument.foldingRange = {
+  dynamicRegistration = false,
+  lineFoldingOnly = true,
+}
+
+vim.lsp.config("*", {
+  capabilities = capabilities,
+})
+
 for _, method in ipairs({ "textDocument/diagnostic", "workspace/diagnostic" }) do
   local default_diagnostic_handler = vim.lsp.handlers[method]
   vim.lsp.handlers[method] = function(err, result, context, config)
