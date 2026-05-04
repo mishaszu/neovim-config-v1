@@ -1,20 +1,5 @@
-local function is_leptos_project()
-  local path = vim.fn.getcwd() .. "/Cargo.toml"
-  local f = io.open(path, "r")
-  if not f then
-    return false
-  end
-  for line in f:lines() do
-    if line:match("%f[%w]leptos%f[%W]") then
-      f:close()
-      return true
-    end
-  end
-  f:close()
-  return false
-end
-
-local has_leptos = is_leptos_project()
+local tools_config = require("config.tools")
+local has_leptos = tools_config.is_leptos_project()
 
 local base_rust_settings = {
   ["rust-analyzer"] = {
@@ -100,7 +85,7 @@ local tools = {
   ["rust-analyzer"] = "rustup component add rust-analyzer",
 }
 
-if has_leptos or require("config.tools").env_enabled("NVIM_ENABLE_LEPTOS", false) then
+if has_leptos or tools_config.env_enabled("NVIM_ENABLE_LEPTOS", false) then
   tools.leptosfmt = "cargo install leptosfmt"
 end
 

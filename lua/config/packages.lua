@@ -5,6 +5,11 @@ local gl = function(x)
   return "https://gitlab.com/" .. x
 end
 
+vim.g.gitblame_enabled = 0
+vim.g.gitblame_message_template = " <summary> • <date> • <author> • <<sha>>"
+vim.g.gitblame_date_format = "%d-%m-%Y %H:%M:%S"
+vim.g.gitblame_virtual_text_column = 1
+
 vim.pack.add({
   -- ui
   gh("nvim-tree/nvim-tree.lua"),
@@ -12,6 +17,7 @@ vim.pack.add({
 
   -- deps
   gh("nvim-tree/nvim-web-devicons"),
+  gh("nvim-neotest/nvim-nio"),
 
   -- buffer line
   gh("arkav/lualine-lsp-progress"),
@@ -38,6 +44,8 @@ vim.pack.add({
 
   -- dap
   gh("mfussenegger/nvim-dap"),
+  gh("rcarriga/nvim-dap-ui"),
+  gh("theHamsta/nvim-dap-virtual-text"),
 
   -- terminals / repls
   gh("akinsho/toggleterm.nvim"),
@@ -91,6 +99,21 @@ vim.pack.add({
 
   -- purescript
   gh("purescript-contrib/purescript-vim"),
+
+  -- rescript / wasm
+  gh("rescript-lang/vim-rescript"),
+  gh("rhysd/vim-wasm"),
+
+  -- editor extras
+  gh("numToStr/Comment.nvim"),
+  gh("JoosepAlviste/nvim-ts-context-commentstring"),
+  gh("rmagatti/auto-session"),
+  gh("ziontee113/color-picker.nvim"),
+  gh("NvChad/nvim-colorizer.lua"),
+
+  -- git
+  gh("tpope/vim-fugitive"),
+  gh("f-person/git-blame.nvim"),
 }, { load = true })
 
 vim.cmd([[colorscheme seoul256]])
@@ -107,9 +130,13 @@ if vim.g.neovide then
 end
 
 require("packages.autopairs")
+require("packages.color-tools")
 require("packages.cmp")
+require("packages.comment")
 require("packages.crates")
+require("packages.dap")
 require("packages.dressing")
+require("packages.git")
 require("packages.lint")
 require("packages.lsp")
 require("packages.lualine")
@@ -119,3 +146,4 @@ require("packages.telescope")
 require("packages.toggleterm")
 require("packages.trouble")
 require("packages.ufo")
+require("packages.session")

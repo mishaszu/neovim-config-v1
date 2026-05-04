@@ -35,12 +35,40 @@ if tool_config.lang_enabled("purescript", false) then
   tools = tool_config.extend(tools, require("langs.purescript"))
 end
 
+if tool_config.lang_enabled("typescript", false) then
+  vim.list_extend(treesitter_langs, { "javascript", "typescript", "tsx" })
+  tools = tool_config.extend(tools, require("langs.typescript"))
+end
+
 if tool_config.lang_enabled("web", false) then
+  vim.list_extend(treesitter_langs, { "javascript", "typescript", "tsx", "css", "html", "json", "yaml" })
+  tools = tool_config.extend(tools, require("langs.web"))
   tools.eslint_d = "npm install -g eslint_d"
+end
+
+if tool_config.lang_enabled("rescript", false) then
+  vim.list_extend(treesitter_langs, { "rescript" })
+  tools = tool_config.extend(tools, require("langs.rescript"))
+end
+
+if
+  tool_config.lang_enabled("tailwind", false)
+  or tool_config.env_enabled("NVIM_ENABLE_LEPTOS", false)
+  or tool_config.is_leptos_project()
+then
+  tools = tool_config.extend(tools, require("langs.tailwind"))
+end
+
+if tool_config.lang_enabled("wasm", false) then
+  tools = tool_config.extend(tools, require("langs.wasm"))
 end
 
 if tool_config.lang_enabled("python", false) then
   tools.pylint = "python -m pip install pylint"
+end
+
+if tool_config.env_enabled("NVIM_ENABLE_DAP", false) and tool_config.lang_enabled("rust", true) then
+  tools.codelldb = "sudo pacman -S codelldb"
 end
 
 tool_config.warn_missing(tools)
