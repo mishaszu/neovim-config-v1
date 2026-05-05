@@ -1,0 +1,38 @@
+stages:
+  - test
+
+variables:
+  XDG_CACHE_HOME: "$CI_PROJECT_DIR/.xdg/cache"
+  XDG_DATA_HOME: "$CI_PROJECT_DIR/.xdg/data"
+  XDG_STATE_HOME: "$CI_PROJECT_DIR/.xdg/state"
+  NVIM_ENABLE_LUA: "0"
+  NVIM_ENABLE_RUST: "0"
+  NVIM_ENABLE_TYPESCRIPT: "0"
+  NVIM_ENABLE_WEB: "0"
+  NVIM_ENABLE_RESCRIPT: "0"
+  NVIM_ENABLE_TAILWIND: "0"
+  NVIM_ENABLE_WASM: "0"
+  NVIM_ENABLE_HASKELL: "0"
+  NVIM_ENABLE_PURESCRIPT: "0"
+  NVIM_ENABLE_PYTHON: "0"
+  NVIM_ENABLE_DAP: "0"
+  NVIM_ENABLE_GIT_TOOLS: "0"
+  NVIM_ENABLE_SESSION: "0"
+  NVIM_ENABLE_COMMENT: "0"
+  NVIM_ENABLE_COLOR_TOOLS: "0"
+
+cache:
+  key:
+    files:
+      - nvim-pack-lock.json
+      - lazy-lock.json
+  paths:
+    - .xdg/
+
+neovim-config:
+  stage: test
+  image: registry.home.szu/devops/ci-images/neovim-config:latest
+  script:
+    - nvim --version | head -n 3
+    - stylua --check init.lua lua after
+    - nvim --headless '+quitall'
