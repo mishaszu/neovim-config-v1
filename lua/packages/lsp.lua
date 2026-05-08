@@ -21,6 +21,13 @@ end
 
 local keymap = vim.keymap -- for conciseness
 
+local function open_diagnostic_float()
+  local _, win = vim.diagnostic.open_float()
+  if win then
+    vim.api.nvim_set_option_value("winblend", 0, { win = win })
+  end
+end
+
 vim.lsp.inlay_hint.enable(true)
 
 vim.keymap.set("n", "<leader>uh", function()
@@ -62,7 +69,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
 
     opts.desc = "Show line diagnostics"
-    keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
+    keymap.set("n", "<leader>d", open_diagnostic_float, opts) -- show diagnostics for line
 
     opts.desc = "Go to previous diagnostic"
     local jumpBackword = function()

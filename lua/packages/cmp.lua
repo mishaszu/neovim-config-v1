@@ -30,8 +30,14 @@ cmp.setup({
     { name = "vsnip", keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
   },
   window = {
-    completion = cmp.config.window.bordered(),
-    documentation = cmp.config.window.bordered(),
+    completion = cmp.config.window.bordered({
+      winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+      winblend = 0,
+    }),
+    documentation = cmp.config.window.bordered({
+      winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+      winblend = 0,
+    }),
   },
   formatting = {
     expandable_indicator = true,
