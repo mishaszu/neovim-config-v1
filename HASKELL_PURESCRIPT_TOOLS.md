@@ -12,6 +12,27 @@ The Neovim integration is intentionally small:
 - All Haskell/PureScript keymaps are buffer-local and only exist when the
   matching filetype is open and the matching env flag is enabled.
 
+## Symbol Shortcuts
+
+Haskell and PureScript buffers include buffer-local insert-mode shortcuts for
+common type and logic symbols. Type the shortcut while in insert mode to insert
+the symbol.
+
+| Shortcut | Symbol | Meaning |
+| --- | --- | --- |
+| `\fa` | `∀` | forall |
+| `\forall` | `∀` | forall |
+| `\ex` | `∃` | exists |
+| `\lam` | `λ` | lambda |
+| `\to` | `→` | right arrow |
+| `\implies` | `⇒` | implies |
+| `\gets` | `←` | left arrow |
+| `\::` | `∷` | type annotation |
+| `\.` | `∘` | composition |
+| `\and` | `∧` | and |
+| `\or` | `∨` | or |
+| `\not` | `¬` | not |
+
 ## Enable the Config
 
 For fish:
