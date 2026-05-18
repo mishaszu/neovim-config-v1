@@ -40,6 +40,8 @@ local tools = {
 }
 
 local function setup_buffer(ev)
+  require("config.symbols").setup_forall_shortcuts(ev.buf)
+
   local ok, ht = pcall(require, "haskell-tools")
   if not ok then
     return

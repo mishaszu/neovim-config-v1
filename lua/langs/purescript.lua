@@ -201,6 +201,8 @@ local function purescript_code_action()
 end
 
 local function setup_buffer(ev)
+  require("config.symbols").setup_forall_shortcuts(ev.buf)
+
   local repl = require("config.repl")
   local opts = { noremap = true, silent = true, buffer = ev.buf }
   local repl_opts = {
