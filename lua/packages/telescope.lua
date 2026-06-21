@@ -1,4 +1,27 @@
 require("telescope").setup({
+  defaults = {
+    file_ignore_patterns = {
+      "/target/",
+    },
+    vimgrep_arguments = {
+      "rg",
+      "--color=never",
+      "--no-heading",
+      "--with-filename",
+      "--line-number",
+      "--column",
+      "--smart-case",
+      "--glob",
+      "!**/target/**",
+    },
+  },
+  pickers = {
+    find_files = {
+      find_command = vim.fn.executable("fd") == 1
+          and { "fd", "--type", "file", "--strip-cwd-prefix", "--exclude", "target" }
+        or { "rg", "--files", "--glob", "!**/target/**" },
+    },
+  },
   extensions = {
     fzf = {},
   },
