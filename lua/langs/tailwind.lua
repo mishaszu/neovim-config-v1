@@ -37,8 +37,10 @@ local function find_tailwind_config_file()
     end
   end
 
-  if vim.fn.executable("fd") == 1 then
-    local files = vim.fn.systemlist({ "fd", "--type", "file", "--extension", "css", ".", cwd })
+  local fd = require("config.tools").executable("fd", "fdfind", "fd-find")
+
+  if fd then
+    local files = vim.fn.systemlist({ fd, "--type", "file", "--extension", "css", ".", cwd })
     if vim.v.shell_error == 0 then
       for _, path in ipairs(files) do
         if has_tailwind_import(path) then

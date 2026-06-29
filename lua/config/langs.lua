@@ -10,7 +10,10 @@ local tools = {
   },
   fzf = "sudo pacman -S fzf",
   rg = "sudo pacman -S ripgrep",
-  fd = "sudo pacman -S fd",
+  fd = {
+    install = "sudo pacman -S fd",
+    alternatives = { "fdfind", "fd-find" },
+  },
   make = "sudo pacman -S make",
   gcc = "sudo pacman -S gcc",
 }

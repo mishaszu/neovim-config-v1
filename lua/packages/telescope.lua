@@ -1,3 +1,5 @@
+local fd = require("config.tools").executable("fd", "fdfind", "fd-find")
+
 require("telescope").setup({
   defaults = {
     file_ignore_patterns = {
@@ -17,8 +19,7 @@ require("telescope").setup({
   },
   pickers = {
     find_files = {
-      find_command = vim.fn.executable("fd") == 1
-          and { "fd", "--type", "file", "--strip-cwd-prefix", "--exclude", "target" }
+      find_command = fd and { fd, "--type", "file", "--strip-cwd-prefix", "--exclude", "target" }
         or { "rg", "--files", "--glob", "!**/target/**" },
     },
   },

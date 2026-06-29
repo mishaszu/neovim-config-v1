@@ -19,6 +19,16 @@ function M.lang_enabled(lang, default)
   return M.env_enabled("NVIM_ENABLE_" .. lang:upper(), default)
 end
 
+function M.executable(...)
+  for _, bin in ipairs({ ... }) do
+    if vim.fn.executable(bin) == 1 then
+      return bin
+    end
+  end
+
+  return nil
+end
+
 function M.cwd_file_contains(path, pattern)
   local file = io.open(vim.fn.getcwd() .. "/" .. path, "r")
   if not file then
@@ -44,8 +54,10 @@ function M.is_leptos_project()
   local cwd = vim.fn.getcwd()
   local cargo_files = {}
 
-  if vim.fn.executable("fd") == 1 then
-    cargo_files = vim.fn.systemlist({ "fd", "--type", "file", "^Cargo\\.toml$", cwd, "--exclude", "target" })
+  local fd = M.executable("fd", "fdfind", "fd-find")
+
+  if fd then
+    cargo_files = vim.fn.systemlist({ fd, "--type", "file", "^Cargo\\.toml$", cwd, "--exclude", "target" })
     if vim.v.shell_error ~= 0 then
       cargo_files = {}
     end
@@ -95,7 +107,7 @@ function M.warn_missing(tools)
   for bin, spec in pairs(tools) do
     local install_cmd = spec.install or spec
 
-    if vim.fn.executable(bin) == 0 then
+    if vim.fn.executable(bin) == 0 and not M.executable(unpack(spec.alternatives or {})) then
       vim.notify(bin .. " not found. Install with: " .. install_cmd, vim.log.levels.WARN)
     elseif spec.min_version and spec.version_cmd then
       local output = vim.fn.system(spec.version_cmd)
