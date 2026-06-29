@@ -30,6 +30,7 @@ local opencode_term = Terminal:new({
     return math.max(80, math.floor(vim.o.columns * 0.4))
   end,
   on_open = function()
+    vim.cmd("wincmd H")
     vim.cmd("vertical resize " .. math.max(80, math.floor(vim.o.columns * 0.4)))
     vim.wo.winblend = 0
   end,
