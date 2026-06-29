@@ -114,6 +114,10 @@ vim.pack.add({
   -- git
   gh("tpope/vim-fugitive"),
   gh("f-person/git-blame.nvim"),
+
+  -- ai
+  gh("olimorris/codecompanion.nvim"),
+  gh("NickvanDyke/opencode.nvim"),
 }, { load = true })
 
 vim.cmd([[colorscheme seoul256]])
@@ -147,3 +151,5 @@ require("packages.toggleterm")
 require("packages.trouble")
 require("packages.ufo")
 require("packages.session")
+require("packages.codecompanion")
+require("packages.opencode")

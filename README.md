@@ -79,6 +79,16 @@ Disabled by default:
   - enables Comment.nvim with treesitter-aware comment strings
 - `NVIM_ENABLE_COLOR_TOOLS=1`
   - enables color picker and colorizer plugins
+- `NVIM_ENABLE_OPENCODE=1`
+  - enables OpenCode integration with keymaps
+  - `opencode`: `npm install -g opencode-ai` (or see https://opencode.ai)
+  - full key bindings and setup in [AI_TOOLS.md](AI_TOOLS.md)
+- `NVIM_ENABLE_CODECOMPANION=1`
+  - enables CodeCompanion (chat/inline/actions) with keymaps
+  - uses the Copilot adapter by default (`gh auth login` / `:Copilot auth`)
+  - full key bindings and setup in [AI_TOOLS.md](AI_TOOLS.md)
+- `NVIM_ENABLE_AI=1`
+  - shorthand that enables **both** OpenCode and CodeCompanion at once
 
 Set any group to `0`, `false`, `no`, or `off` to disable it. Example:
 

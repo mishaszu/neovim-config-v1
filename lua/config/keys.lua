@@ -19,6 +19,13 @@ keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to the pre window" }) --  go to 
 keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to down window" }) --  go to previous tab
 keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to up window" }) --  go to previous tab
 
+-- terminal: leave insert mode and move between windows (e.g. OpenCode terminal)
+keymap.set("t", "<C-h>", [[<C-\><C-n><C-w>h]], { desc = "Terminal: go to left window" })
+keymap.set("t", "<C-j>", [[<C-\><C-n><C-w>j]], { desc = "Terminal: go to down window" })
+keymap.set("t", "<C-k>", [[<C-\><C-n><C-w>k]], { desc = "Terminal: go to up window" })
+keymap.set("t", "<C-l>", [[<C-\><C-n><C-w>l]], { desc = "Terminal: go to right window" })
+keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Terminal: exit to normal mode" })
+
 keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" }) -- open new tab
 keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" }) -- close current tab
 keymap.set("n", "<S-Tab>", "<cmd>tabp<CR>", { noremap = true })
